@@ -672,25 +672,164 @@ textarea::placeholder {
    ========================================================= */
 
 footer {
-  margin-top: 48px;
+  margin-top: 60px;
 
+  position: relative;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(160deg,
+      rgba(255, 255, 255, 0.032),
+      rgba(108, 142, 239, 0.04),
+      rgba(255, 255, 255, 0.018));
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  backdrop-filter: blur(20px);
+
+  overflow: hidden;
+}
+
+/* Subtle top glow line */
+footer::before {
+  content: '';
+
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 60%;
+  height: 1px;
+
+  background:
+    linear-gradient(90deg,
+      transparent,
+      rgba(108, 142, 239, 0.55),
+      transparent);
+}
+
+/* Ambient glow blob */
+footer::after {
+  content: '';
+
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+
+  width: 280px;
+  height: 280px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle,
+      rgba(108, 142, 239, 0.09),
+      transparent 70%);
+
+  pointer-events: none;
+}
+
+.footer-inner {
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
 
-  grid-template-columns:
-    minmax(320px, 460px) 1fr auto;
-
-  gap: 28px;
-
-  align-items: center;
-
-  padding-top: 28px;
-
-  border-top:
-    1px solid rgba(255, 255, 255, 0.06);
+  padding: 40px 44px;
 }
 
 /* =========================================================
-   FOOTER CARD
+   FOOTER BRAND (left)
+   ========================================================= */
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(135deg,
+      rgba(108, 142, 239, 0.28),
+      rgba(139, 92, 246, 0.22));
+
+  border: 1px solid rgba(108, 142, 239, 0.22);
+}
+
+.footer-logo-icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+}
+
+.footer-logo-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.footer-desc {
+  font-size: 0.82rem;
+  line-height: 1.85;
+  color: var(--text-muted);
+  max-width: 360px;
+}
+
+.footer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-tag {
+  padding: 4px 12px;
+
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+
+  color: var(--accent);
+
+  background: rgba(108, 142, 239, 0.08);
+
+  border: 1px solid rgba(108, 142, 239, 0.18);
+}
+
+/* =========================================================
+   FOOTER ACTION (right)
+   ========================================================= */
+
+.footer-action {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+}
+
+/* =========================================================
+   FOOTER CARD LINK
    ========================================================= */
 
 .plantuml-link {
@@ -700,47 +839,43 @@ footer {
   align-items: center;
   gap: 18px;
 
-  padding: 22px;
+  padding: 18px 20px;
 
   overflow: hidden;
 
-  border-radius: 24px;
+  border-radius: 18px;
 
   text-decoration: none;
 
-  background:
-    linear-gradient(180deg,
-      rgba(255, 255, 255, 0.035),
-      rgba(255, 255, 255, 0.02));
+  background: rgba(255, 255, 255, 0.03);
 
-  border:
-    1px solid rgba(255, 255, 255, 0.07);
-
-  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 
   transition:
     transform .2s ease,
     border-color .2s ease,
-    box-shadow .2s ease;
+    box-shadow .2s ease,
+    background .2s ease;
 }
 
 .plantuml-link:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 
-  border-color:
-    rgba(108, 142, 239, 0.28);
+  background: rgba(108, 142, 239, 0.06);
+
+  border-color: rgba(108, 142, 239, 0.3);
 
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.34);
+    0 12px 32px rgba(0, 0, 0, 0.28);
 }
 
 .link-icon {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
 
   flex-shrink: 0;
 
-  border-radius: 18px;
+  border-radius: 14px;
 
   display: flex;
   align-items: center;
@@ -748,16 +883,15 @@ footer {
 
   background:
     linear-gradient(135deg,
-      rgba(108, 142, 239, 0.24),
-      rgba(139, 92, 246, 0.18));
+      rgba(108, 142, 239, 0.22),
+      rgba(139, 92, 246, 0.16));
 
-  border:
-    1px solid rgba(108, 142, 239, 0.18);
+  border: 1px solid rgba(108, 142, 239, 0.18);
 }
 
 .link-icon svg {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 
   color: var(--accent);
 }
@@ -769,16 +903,16 @@ footer {
 .link-title {
   color: var(--text);
 
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
 
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .link-url {
   color: var(--text-muted);
 
-  font-size: 0.76rem;
+  font-size: 0.73rem;
 
   white-space: nowrap;
   overflow: hidden;
@@ -786,27 +920,59 @@ footer {
 }
 
 /* =========================================================
-   FOOTER TEXT
+   FOOTER HINT
    ========================================================= */
 
 .footer-hint {
-  max-width: 520px;
-
-  font-size: 0.82rem;
-
+  font-size: 0.8rem;
   line-height: 1.8;
-
   color: var(--text-muted);
+  margin: 0;
 }
 
 .footer-credit-link {
   color: var(--accent);
-
   text-decoration: none;
+  font-weight: 500;
 }
 
 .footer-credit-link:hover {
   color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* =========================================================
+   FOOTER BOTTOM BAR
+   ========================================================= */
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 44px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.footer-copyright {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.footer-version {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+
+  padding: 3px 10px;
+  border-radius: 999px;
+
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* =========================================================
@@ -942,7 +1108,17 @@ footer {
   }
 
   footer {
+    border-radius: 20px;
+  }
+
+  .footer-inner {
     grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 32px 28px;
+  }
+
+  .footer-bottom {
+    padding: 14px 28px;
   }
 
   .footer-hint {
