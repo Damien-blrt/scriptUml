@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scriptUML</title>
+  <meta name="description" content="Générateur de diagrammes de Gantt PlantUML à partir de données CSV">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="4" rx="1" />
+          <rect x="3" y="10" width="12" height="4" rx="1" />
+          <rect x="3" y="16" width="15" height="4" rx="1" />
+        </svg>
+      </div>
+      <div>
+        <h1>Gantt → PlantUML <span>/ Générateur</span></h1>
+      </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+
+      <!-- INPUT PANEL -->
+      <div class="panel" id="inputPanel">
+        <div class="panel-header">
+          <span class="panel-title"><span class="indicator"></span> Données CSV</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" id="btnExample">Exemple</button>
+            <button class="btn btn-ghost btn-sm" id="btnClear">Vider</button>
+          </div>
+        </div>
+
+        <div class="csv-helpers">
+          <span class="col-badge">DUREE</span>
+          <span class="col-badge">PREDECESSEURS</span>
+          <span class="col-badge">NOM_TACHE</span>
+          <span class="col-badge">REALISE</span>
+          <span class="col-badge">QUI</span>
+        </div>
+
+        <!-- Config -->
+        <div class="date-config">
+          <span class="config-label">Début :</span>
+          <input type="date" id="projectStart">
+          <span class="config-label" style="margin-left:8px">Titre :</span>
+          <input type="text" id="projectTitle" value="Diagramme de Gantt du Projet">
+        </div>
+        <div class="date-config" style="gap:18px; padding-top:8px; padding-bottom:10px;">
+          <label class="checkbox-row"><input type="checkbox" id="closeSat"> Sam. fermés</label>
+          <label class="checkbox-row"><input type="checkbox" id="closeSun" checked> Dim. fermés</label>
+        </div>
+
+        <div class="textarea-wrap">
+          <textarea id="csvInput" placeholder="DUREE(DAYS),PREDECESSEURS,NOM_TACHE,REALISE_OUI_OU_NON_OU_POURCENTAGE,QUI
+4,-,Spécifications fonctionnelles,100,DamienChef
+5,Spécifications fonctionnelles,Conception Architecture,100,DamienArchitecte
+3,Conception Architecture,Modélisation Base de Données,100,DamienArchitecte/LeadDamien
+8,Modélisation Base de Données,Développement Backend API,50,LeadDamien/DamienDev
+6,Modélisation Base de Données,Intégration Maquettes UI,75,FrontendDamien
+5,Développement Backend API;Intégration Maquettes UI,Connexion API Backend-Frontend,0,LeadDamien/FrontendDamien
+..."></textarea>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="btnGenerate">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+            Générer
+          </button>
+          <button class="btn btn-ghost" id="btnCopy">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            Copier
+          </button>
+          <button class="btn btn-success" id="btnDownload">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            .puml
+          </button>
+        </div>
+      </div>
+
+      <!-- OUTPUT PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title"><span class="indicator green"></span> PlantUML généré</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span id="lineCount" class="line-count">— lignes</span>
+            <button class="btn btn-ghost btn-sm" id="btnCopyOutput"
+              style="display:none;padding:4px 10px;font-size:0.72rem;gap:4px">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              Copier
+            </button>
+          </div>
+        </div>
+        <div class="output-area">
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <span>Entrez vos données CSV et cliquez sur <strong style="color:var(--accent)">Générer</strong></span>
+          </div>
+          <pre id="outputCode" style="display:none"></pre>
+        </div>
+        <div class="stats-bar" id="statsBar" style="display:none">
+          <span class="stat">
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" />
+              <path d="M16 7V5a4 4 0 0 0-8 0v2" />
+            </svg>
+            Tâches : <strong id="statTasks">0</strong>
+          </span>
+          <span class="stat">
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            Dépend. : <strong id="statDeps">0</strong>
+          </span>
+          <span class="stat">
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Complétés : <strong id="statDone">0</strong>
+          </span>
+          <span class="stat">
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            En cours : <strong id="statWip">0</strong>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <a href="https://www.plantuml.com/plantuml/uml/" target="_blank" class="plantuml-link">
+        <div class="link-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </div>
+        <div class="link-body">
+          <div class="link-title">Visualiser sur PlantUML Online</div>
+          <div class="link-url">https://www.plantuml.com/plantuml/uml/</div>
+        </div>
+      </a>
+      <p class="footer-hint">Copiez le code généré, puis collez-le dans l'éditeur PlantUML pour visualiser votre
+        diagramme. Site réalisé par <a href="https://codefirst.iut.uca.fr/kubernetes/daballerat/damien-portfolio/"
+          target="_blank" class="footer-credit-link">Damien Ballerat</a></p>
+      <a href="https://www.plantuml.com/plantuml/uml/" target="_blank" class="btn-open-plantuml">
+        Ouvrir PlantUML
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </a>
+    </footer>
+
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+    <span class="toast-text"></span>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- Wire up buttons (kept outside app.js for clean separation) -->
+  <script>
+    document.getElementById('btnExample').addEventListener('click', loadExample);
+    document.getElementById('btnClear').addEventListener('click', clearInput);
+    document.getElementById('btnGenerate').addEventListener('click', generate);
+    document.getElementById('btnCopy').addEventListener('click', copyOutput);
+    document.getElementById('btnCopyOutput').addEventListener('click', copyOutput);
+    document.getElementById('btnDownload').addEventListener('click', downloadOutput);
+  </script>
+
+</body>
+
+</html>
